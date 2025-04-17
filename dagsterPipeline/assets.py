@@ -27,8 +27,8 @@ def write_csv_ToPostgres():
     engine = create_engine('postgresql://postgres:root@localhost:5432/APDV')
     csvI = pd.read_csv("C:/Users/harig/APDV/dagsterPipeline/data/Electric_Vehicle_Population_Size_History_By_County_20250411.csv")
     csvII = pd.read_csv("C:/Users/harig/APDV/dagsterPipeline/data/ev_charging_patterns.csv")
-    csvI.to_sql('EV_Population_Size_By_County', engine,if_exists='replace')
-    csvII.to_sql('EV_Charging_Patterns', engine,if_exists='replace')
+    csvI.to_sql('evpop', engine,if_exists='replace')
+    csvII.to_sql('evcharge', engine,if_exists='replace')
 
 @asset(deps=[load_json_to_mongodb])
 def prep_jsonData():
@@ -56,4 +56,4 @@ def prep_jsonData():
 @asset(deps=[prep_jsonData])
 def write_jsonToPostgres(prep_jsonData):
     engine = create_engine('postgresql://postgres:root@localhost:5432/APDV')
-    prep_jsonData.to_sql('AirQuality', engine,if_exists='replace')
+    prep_jsonData.to_sql('airquality', engine,if_exists='replace')
