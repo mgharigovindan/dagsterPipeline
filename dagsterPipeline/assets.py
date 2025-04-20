@@ -14,6 +14,8 @@ os.makedirs(output_dir, exist_ok=True)
 
 @asset
 def load_json_to_mongodb():
+    logger = get_dagster_logger()
+    logger.info(f"{os.getcwd()}")
     client = MongoClient("mongodb://localhost:27017")
     db = client["EV"]
     collection = db["evData"]
