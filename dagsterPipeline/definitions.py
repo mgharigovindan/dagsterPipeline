@@ -9,7 +9,8 @@ pipeline = define_asset_job(
         "load_json_to_mongodb",
         "prep_jsonData",
         "write_jsonToPostgres",
-        "write_csv_ToPostgres"
+        "write_csv_ToPostgres",
+        "read_Api"
     ]
 )
 
