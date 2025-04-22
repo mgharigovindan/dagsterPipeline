@@ -10,7 +10,8 @@ pipeline = define_asset_job(
         "prep_jsonData",
         "write_jsonToPostgres",
         "write_csv_ToPostgres",
-        "read_Api"
+        "read_Api",
+        "create_postgres_user"
     ]
 )
 
