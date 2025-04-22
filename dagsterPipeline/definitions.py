@@ -11,7 +11,8 @@ pipeline = define_asset_job(
         "write_jsonToPostgres",
         "write_csv_ToPostgres",
         "read_Api",
-        "create_postgres_user"
+        "create_postgres_user",
+        "create_mongodb_collection"
     ]
 )
 

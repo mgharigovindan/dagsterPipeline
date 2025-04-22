@@ -15,11 +15,19 @@ output_dir = os.path.join(os.getcwd(), "data")
 os.makedirs(output_dir, exist_ok=True)
 
 @asset
+def create_mongodb_collection():
+    uri = "mongodb://localhost:27017"
+    client = MongoClient(uri)
+    db = client["APDV"]
+    collection = db["EV"]
+    print("Connection successful.")
+
+@asset
 def create_postgres_user():
     logger = get_dagster_logger()
     conn = psycopg2.connect(
     dbname="postgres",
-    user="postgres",        # Superuser
+    user="postgres", 
     password="root",
     host="localhost",
     port="5432"
