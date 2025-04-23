@@ -73,7 +73,7 @@ def create_postgres_user():
     cursor.close()
     conn.close()
 
-@asset
+@asset(deps=[create_mongodb_collection])
 def load_json_to_mongodb():
     logger = get_dagster_logger()
     logger.info(f"{os.getcwd()}")
@@ -113,7 +113,7 @@ def prep_jsonData():
     df_data.drop(df_data.columns[:8],inplace=True,axis=1)
     df_data.columns = final_col
     logger.info(f"Prepared DataFrame:\n{df_data.head()}")
-    df_data.to_csv(os.path.join(output_dir,'AQ.csv'),index=False)
+    df_data.to_csv(os.path.join(output_dir,'EV-population.csv'),index=False)
     return df_data
 
 @asset(deps=[prep_jsonData,create_postgres_user])
