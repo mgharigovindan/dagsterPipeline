@@ -26,9 +26,9 @@ def create_mongodb_collection():
 def create_postgres_user():
     logger = get_dagster_logger()
     conn = psycopg2.connect(
-    dbname="postgres",
-    user="postgres",        # Superuser
-    password="root",
+    dbname="APDV",
+    user="dap",        # Superuser
+    password="dap",
     host="localhost",
     port="5432"
     )
