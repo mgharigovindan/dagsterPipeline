@@ -14,7 +14,7 @@ from dagster import asset, get_dagster_logger
 output_dir = os.path.join(os.getcwd(), "data")
 os.makedirs(output_dir, exist_ok=True)
 
-@asset
+@asset(description="This asset creates a mongodb collection to store json data.")
 def create_mongodb_collection():
     uri = "mongodb://localhost:27017"
     client = MongoClient(uri)
@@ -22,7 +22,7 @@ def create_mongodb_collection():
     collection = db["EV"]
     print("Connection successful.")
 
-@asset
+@asset(description="This asset creates a new postgres user to the group")
 def create_postgres_user():
     logger = get_dagster_logger()
     conn = psycopg2.connect(
@@ -73,7 +73,7 @@ def create_postgres_user():
     cursor.close()
     conn.close()
 
-@asset(deps=[create_mongodb_collection])
+@asset(deps=[create_mongodb_collection],description="This asset loads json data to pandas dataframe.")
 def load_json_to_mongodb():
     logger = get_dagster_logger()
     logger.info(f"{os.getcwd()}")
@@ -93,7 +93,7 @@ def load_json_to_mongodb():
 
     return collection.name
 
-@asset(deps=[load_json_to_mongodb])
+@asset(deps=[load_json_to_mongodb],description="This asset does basic data processing of the json data.")
 def prep_jsonData():
     logger = get_dagster_logger()
     client = MongoClient("mongodb://localhost:27017/")
@@ -116,12 +116,12 @@ def prep_jsonData():
     df_data.to_csv(os.path.join(output_dir,'EV-population.csv'),index=False)
     return df_data
 
-@asset(deps=[prep_jsonData,create_postgres_user])
+@asset(deps=[prep_jsonData,create_postgres_user],description="This asset writes the dataframe to postgres.")
 def write_jsonToPostgres(prep_jsonData):
     engine = create_engine('postgresql://dap:dap@localhost:5432/APDV')
     prep_jsonData.to_sql('evpopulation', engine,if_exists='replace')
 
-@asset
+@asset(description="This asset reads the data from the API provided by US EPA.")
 def read_Api():
     params = "88101,42602,42101,44201,42401"
     years = list(range(2024, 2025))
@@ -161,7 +161,7 @@ def read_Api():
     df.to_csv(os.path.join(output_dir,"epa_combined_data.csv"), index=False)
     return df
 
-@asset(deps=[read_Api,create_postgres_user])
+@asset(deps=[read_Api,create_postgres_user],description="This asset writes the static csvs to prostgres.")
 def write_csv_ToPostgres():
     engine = create_engine('postgresql://dap:dap@localhost:5432/APDV')
     csvI = pd.read_csv(os.path.join(output_dir,"epa_combined_data.csv"))
